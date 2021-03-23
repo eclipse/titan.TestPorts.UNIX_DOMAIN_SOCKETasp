@@ -177,7 +177,7 @@ void UD__PT_PROVIDER::Handle_Fd_Event_Readable(int fd)
 						//there is an empty message, or error in receive
 						//remove the socket
 						int close_fd=conn_list[a].fd;
-						std::cout << "close_fd" << close_fd << std::endl;
+						log("recv() returned %d, removing fd=%d", size_read, close_fd);
 						conn_list[a].status=0;
 						Free(conn_list[a].buf);
 						conn_list[a].buf = NULL;
