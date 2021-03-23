@@ -177,13 +177,20 @@ void UD__PT_PROVIDER::Handle_Fd_Event_Readable(int fd)
 						//there is an empty message, or error in receive
 						//remove the socket
 						int close_fd=conn_list[a].fd;
-						std::cout << "close_fd" << close_fd << std::endl;
+						log("recv() returned %d, removing fd=%d", size_read, close_fd);
 						conn_list[a].status=0;
 						Free(conn_list[a].buf);
 						conn_list[a].buf = NULL;
 						num_of_conn--;
 						Handler_Remove_Fd_Read(close_fd);
 						close(close_fd);
+
+						//notify the port user about that
+						UD__Types::UD__connect__result cr;
+						cr.id() = a;
+						cr.result()().result__code() = UD__Types::UD__Result__code::ERROR_;
+						cr.result()().err() = "Connection closed by remote peer";
+						incoming_message(cr);
 
 						//unlink(conn_list[a].remote_Addr.sun_path);
 					}
